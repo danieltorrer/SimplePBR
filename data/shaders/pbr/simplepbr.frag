@@ -2,6 +2,7 @@
 
 // GLSL shader by Nick Galko from https://gist.github.com/galek/53557375251e1a942dfa
 //Ported to Processing by Nacho Cossio (nachocossio.com, @nacho_cossio) 
+//Update by Alexandre Rivaux (BonjourLab)
 
 uniform mat4 transformMatrix;
 uniform mat4 modelviewMatrix;
@@ -14,6 +15,7 @@ uniform samplerCube envd;  // prefiltered env cubemap
  // I have kept it like this for making easier to get materials from different websites
 uniform sampler2D roughnessMap;    // roughness texture
 uniform sampler2D metalnessMap;    // metalness texture.
+uniform sampler2D normalMap;
                                    
                                     
 uniform sampler2D iblbrdf; // IBL BRDF normalization precalculated tex
@@ -47,6 +49,7 @@ out vec4 fragColor;
 #define USE_ALBEDO_MAP
 #define USE_ROUGHNESS_MAP
 #define USE_METALNESS_MAP
+#define USE_NORMAL_MAP
 
 float falloffFactor(vec3 lightPos, vec3 vertPos, vec3 coeff) {
   vec3 lpv = lightPos - vertPos;
@@ -148,6 +151,36 @@ vec3 cooktorrance_specular(in float NdL, in float NdV, in float NdH, in vec3 spe
     return (1.0 / rim) * specular * G * D;
 }
 
+// http://www.thetenthplanet.de/archives/1180
+mat3 cotangent_frame(vec3 N, vec3 p, vec2 uv)
+{
+    // récupère les vecteurs du triangle composant le pixel
+    vec3 dp1 = dFdx( p );
+    vec3 dp2 = dFdy( p );
+    vec2 duv1 = dFdx( uv );
+    vec2 duv2 = dFdy( uv );
+
+    // résout le système linéaire
+    vec3 dp2perp = cross( dp2, N );
+    vec3 dp1perp = cross( N, dp1 );
+    vec3 T = dp2perp * duv1.x + dp1perp * duv2.x;
+    vec3 B = dp2perp * duv1.y + dp1perp * duv2.y;
+
+    // construit une trame invariante à l'échelle 
+    float invmax = inversesqrt( max( dot(T,T), dot(B,B) ) );
+    return mat3( T * invmax, B * invmax, N );
+}
+
+vec3 perturb_normal( vec3 N, vec3 V, vec2 texcoord, sampler2D normalMap)
+{
+    // N, la normale interpolée et
+    // V, le vecteur vue (vertex dirigé vers l'œil)
+    vec3 map = texture(normalMap, texcoord).xyz;
+    map = map * 255./127. - 128./127.;
+    mat3 TBN = cotangent_frame(N, -V, texcoord);
+    return normalize(TBN * map);
+}
+
                       
 void main() {
     // L, V, H vectors
@@ -162,7 +195,6 @@ void main() {
 
     vec2 texcoord = FragIn.texCoord ;
 
-    vec3 N = nn;
 
     // albedo/specular base
  #ifdef USE_ALBEDO_MAP
@@ -178,11 +210,18 @@ void main() {
     float roughness = material.y;
  #endif
 
-#ifdef USE_METALNESS_MAP
-    float metallic = texture2D(metalnessMap, texcoord).y * material.x;
-#else
-    float metallic = material.x;
-#endif
+ #ifdef USE_METALNESS_MAP
+     float metallic = texture2D(metalnessMap, texcoord).y * material.x;
+ #else
+     float metallic = material.x;
+ #endif
+
+ #ifdef USE_NORMAL_MAP
+    vec3 N = mix(nn, perturb_normal(nn, normalize(FragIn.ecVertex.xyz), texcoord, normalMap), material.z);
+ #else
+    vec3 N = nn;
+ #endif
+
 
     // mix between metal and non-metal material, for non-metal
     // constant base specular factor of 0.04 grey is used

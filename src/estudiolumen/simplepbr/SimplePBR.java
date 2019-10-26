@@ -78,7 +78,7 @@ public class SimplePBR {
 		IntBuffer envMapTextureID;
 
 		PGL pgl = p5.beginPGL();
-		//		GL3 gl = ((PJOGL) pgl).gl.getGL3();
+		//GL3 gl = ((PJOGL) pgl).gl.getGL3();
 		// create the OpenGL-based cubeMap
 		envMapTextureID = IntBuffer.allocate(1);
 		pgl.genTextures(1, envMapTextureID);

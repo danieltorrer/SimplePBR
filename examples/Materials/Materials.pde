@@ -26,7 +26,7 @@ void setup() {
 	mat = new PBRMat(path + "material/Wood_006/");
 	mat2 = new PBRMat(path + "material/Metal_01/");
 	// Create a textureless material controlled just by metallic and roughness parameters
-	mat3 = new PBRMat();
+	mat3 = new PBRMat(path + "material/Plaster/");
 	noStroke();
 }
 
@@ -67,6 +67,7 @@ void draw() {
 	// In textureless material, roughness, metalness and color must be set manually like this
 	mat3.setRougness(map(mouseX, 0, width, 0.001f, 1f));
 	mat3.setMetallic(map(mouseY, 0, height, 0f, 1f));
+	mat3.setNormalIntensity(abs(sin(millis() * 0.001)));
 	fill(200); //
 	mat3.bind();
 	sphere(180);
