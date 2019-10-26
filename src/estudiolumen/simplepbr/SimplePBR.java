@@ -46,6 +46,13 @@ public class SimplePBR {
 		pbrShader.set("iblbrdf", iblbrdf);
 		pbrShader.set("exposure", exposure);
 	}
+	
+	public static void bindPBRParamsToCustomShader(PShader shader) {
+		shader.set("mipLevels", mipLevels);
+		shader.set("envd", 5);
+		shader.set("iblbrdf", iblbrdf);
+		shader.set("exposure", exposure);
+	}
 
 	public static PApplet getPapplet() {
 		return papplet;
@@ -70,6 +77,22 @@ public class SimplePBR {
 	
 	public static void setReflectionAttenuation(float att) {
 		pbrShader.set("reflectIndirectAttenuate", att);
+	}
+	
+	public static void setExposure(PShader shader, float _exposure) {
+		setExposure(_exposure);
+		exposure = _exposure;
+		shader.set("exposure", exposure);
+	}
+	
+	public static void setDiffuseAttenuation(PShader shader, float att) {
+		setDiffuseAttenuation(att);
+		shader.set("diffuseIndirectAttenuate", att);
+	}
+	
+	public static void setReflectionAttenuation(PShader shader, float att) {
+		setReflectionAttenuation(att);
+		shader.set("reflectIndirectAttenuate", att);
 	}
 	
 	static public PImage[] loadPrefilteredEnviromentMap(PApplet p5, int textureID, String texturesPath, String irradianceTexturePath, int minLevel){

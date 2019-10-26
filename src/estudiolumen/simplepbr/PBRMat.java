@@ -25,12 +25,27 @@ public class PBRMat {
 		normalTex = SimplePBR.getWhiteTexture();
 	}
 	
-	public PBRMat( String path){
+	public PBRMat(String path){
 		this();
 		albedoTex = SimplePBR.getPapplet().loadImage(path+"albedo.png");
 		metallicTex = SimplePBR.getPapplet().loadImage(path+"metalness.png");
 		roughnessTex = SimplePBR.getPapplet().loadImage(path+"roughness.png");
 		normalTex = SimplePBR.getPapplet().loadImage(path+"normal.png");
+	}
+	
+	public void setVertexCustomShader(String vertSource) {
+		shader = new PShader(SimplePBR.getPapplet(), vertSource, "data/shaders/pbr/simplepbr.frag");
+		SimplePBR.bindPBRParamsToCustomShader(shader);
+	}
+	
+	public void setFragmentCustomShader(String fragSource) {
+		shader = new PShader(SimplePBR.getPapplet(), "data/shaders/pbr/pbr.vert", fragSource);
+		SimplePBR.bindPBRParamsToCustomShader(shader);
+	}
+	
+	public void setCustomShader(String vertSource, String fragSource) {
+		shader = new PShader(SimplePBR.getPapplet(), vertSource, fragSource);
+		SimplePBR.bindPBRParamsToCustomShader(shader);
 	}
 	
 	public PBRMat(PBRMat copy){
@@ -107,17 +122,17 @@ public class PBRMat {
 	
 	
 	public PBRMat setFloat(String name, float value) {
-		shader.set("name", value);
+		shader.set(name, value);
 		return this;
 	}
 	
 	public PBRMat setVector(String name, float x, float y, float z) {
-		shader.set("name", x, y, z);
+		shader.set(name, x, y, z);
 		return this;
 	}
 	
-	public PBRMat setTexture(String name, PImage texture) {
-		shader.set("name", texture);
+	public PBRMat setTexture(String name, PImage map) {
+		shader.set(name, map);
 		return this;
 	}
 }

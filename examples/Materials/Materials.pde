@@ -24,7 +24,7 @@ void setup() {
 
 	// Create PBR materials from a set of textures
 	mat = new PBRMat(path + "material/Wood_006/");
-	mat2 = new PBRMat(path + "material/Metal_01/");
+	mat2 = new PBRMat(path + "material/Metal_Rusted_006/");
 	// Create a textureless material controlled just by metallic and roughness parameters
 	mat3 = new PBRMat(path + "material/Plaster/");
 	noStroke();

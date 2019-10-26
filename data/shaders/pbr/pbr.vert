@@ -22,7 +22,6 @@ out FragData {
 } FragOut;
  
 
-
 void main() {
   
   gl_Position = transformMatrix * position;
