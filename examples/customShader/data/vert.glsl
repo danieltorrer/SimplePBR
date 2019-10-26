@@ -18,6 +18,7 @@ in vec2 texCoord;
  
 out FragData {
   vec4 color;
+  vec4 vertex;
   vec3 ecVertex;
   vec3 normal;
   vec2 texCoord;
@@ -38,6 +39,7 @@ void main() {
   vec4 dp = vec4(FragOut.normal * df * displacementFactor, 0.0) + position;
 
   gl_Position = transformMatrix * dp;
+  FragOut.vertex = transformMatrix * dp;
   vec3 ecp = vec3(modelviewMatrix * dp);
   FragOut.ecVertex = ecp;
   FragOut.color =  color;

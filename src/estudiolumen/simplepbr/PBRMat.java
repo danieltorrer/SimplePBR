@@ -125,9 +125,20 @@ public class PBRMat {
 		shader.set(name, value);
 		return this;
 	}
+
+	
+	public PBRMat setVector(String name, float x, float y) {
+		shader.set(name, x, y);
+		return this;
+	}
 	
 	public PBRMat setVector(String name, float x, float y, float z) {
 		shader.set(name, x, y, z);
+		return this;
+	}
+	
+	public PBRMat setVector(String name, float x, float y, float z, float w) {
+		shader.set(name, x, y, z, w);
 		return this;
 	}
 	

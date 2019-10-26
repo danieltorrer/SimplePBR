@@ -40,6 +40,7 @@ const float one_float = 1.0;
 
 in FragData {
   vec4 color;
+  vec4 vertex;
   vec3 ecVertex;
   vec3 normal;
   vec2 texCoord;
@@ -191,7 +192,10 @@ void main() {
     // vec3 L = normalize(local_light_pos - FragIn.ecVertex);
     vec3 V = normalize(-FragIn.ecVertex);
     // vec3 H = normalize(L + V);
-    vec3 nn = normalize(FragIn.normal);
+    vec3 nn = normalize(cross( dFdx( FragIn.vertex.xyz ), dFdy( FragIn.vertex.xyz )));
+    /*above : use the derivativ to compute the normal when the vertex has been displace. see ref here : https://forum.libcinder.org/topic/calculating-normals-after-displacing-vertices-in-shader
+    //normalize(FragIn.normal);
+    */
 
     //TODO dont have binormal, need to compute it
     // vec3 nb = normalize(v_binormal);
