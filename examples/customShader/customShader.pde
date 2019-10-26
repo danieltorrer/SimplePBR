@@ -84,7 +84,6 @@ void draw() {
 	sphere(radius);
 	popMatrix();
 
-
 	popMatrix();
 
 	resetShader();
